@@ -2,10 +2,10 @@ import requests
 import csv
 import datetime
 endarr = ["cat-62","esperas","metaf","metar","satelite","tc-prev","tc-real"]
-endpoint = endarr[0]
+endpoint = "bimtra"#endarr[0]
 base_url = "http://montreal.icea.decea.mil.br:5002/api/v1/"+endpoint
 token = "a779d04f85c4bf6cfa586d30aaec57c44e9b7173"
-REMOVER
+
 # Definindo as datas inicial e final
 start_date = datetime.date(2020, 1, 1)
 start_date2 = datetime.date(2023, 1, 1)
@@ -17,7 +17,7 @@ current_date = start_date
 date_format = "%Y-%m-%d %H:%M:%S.001" # %Y-%m-%d
 
 # Criando o arquivo CSV
-filename = "data/"+endpoint+".csv"
+filename = "data/"+endpoint+"_test.csv"
 csv_file = open(filename, "w", newline="")
 csv_writer = csv.writer(csv_file)
 params = {

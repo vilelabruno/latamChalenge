@@ -11,11 +11,11 @@ def download_images(df):
         # Extrai o nome do arquivo da URL
         nome_arquivo = path.split('/')[-1]
         print(nome_arquivo)
-        if nome_arquivo == 'S11635384_202208250300.jpg': # Caso o nome do arquivo não seja encontrado
-            unlock = True
-        if ~unlock:
-            continue
-        # Define o caminho onde a imagem será salva
+        #if nome_arquivo == 'S11635384_202208250300.jpg': # Caso o nome do arquivo não seja encontrado
+        #    unlock = True
+        #if ~unlock:
+        #    continue
+        ## Define o caminho onde a imagem será salva
         pasta_destino = f'data/img/'
         
         # Faz o download da imagem usando a biblioteca requests

@@ -1,56 +1,37 @@
 import requests
-import csv
-import datetime
-endarr = ["cat-62","esperas","metaf","metar","satelite","tc-prev","tc-real"]
-endpoint = "bimtra"#endarr[0]
-base_url = "http://montreal.icea.decea.mil.br:5002/api/v1/"+endpoint
-token = "a779d04f85c4bf6cfa586d30aaec57c44e9b7173"
-
-# Definindo as datas inicial e final
-start_date = datetime.date(2020, 1, 1)
-start_date2 = datetime.date(2023, 1, 1)
-end_date = datetime.date.today()
-
-# Iterando a cada dois meses
-delta = datetime.timedelta(days=1)
-current_date = start_date
-date_format = "%Y-%m-%d %H:%M:%S.001" # %Y-%m-%d
-
-# Criando o arquivo CSV
-filename = "data/"+endpoint+"_test.csv"
-csv_file = open(filename, "w", newline="")
-csv_writer = csv.writer(csv_file)
-params = {
-    "token": token,
-    "idate": start_date2.strftime(date_format),
-    "fdate": (start_date2 + delta).strftime(date_format)
+import pandas as pd
+from datetime import timedelta
+import sys
+url = "http://montreal.icea.decea.mil.br:5002/api/v1/{0}?token=a779d04f85c4bf6cfa586d30aaec57c44e9b7173".format(sys.argv[1])
+headers = {
+  'accept': 'application/json'
 }
-response = requests.get(base_url, params=params, headers={"accept": "application/json"})
-data = response.json()
-csv_writer.writerow(data[0].keys())
-# Fazendo uma solicitação para cada data e armazenando os dados no CSV
-while current_date <= end_date:
+
+# Gere todas as datas entre 2022 e 2023
+dates = pd.date_range(start="2022-01-01", end="2023-12-31")
+
+all_data = []
+
+# Itere sobre todas as datas
+for date in dates:
+    # Defina o intervalo de datas para a requisição
+    idate = date.strftime('%Y-%m-%d')
+    fdate = (date + timedelta(days=1)).strftime('%Y-%m-%d')
+
+    # Construa a URL final
+    final_url = f"{url}&idate={idate}&fdate={fdate}"
+
+    # Fazer a requisição
+    response = requests.request("GET", final_url, headers=headers)
     
-    params = {
-        "token": token,
-        "idate": current_date.strftime(date_format),
-        "fdate": (current_date + delta).strftime(date_format)
-    }
-    print(params)
-    response = requests.get(base_url, params=params, headers={"accept": "application/json"})
-    data = response.json()
+    # Verificar se a resposta é válida (status code 200)
+    if response.status_code == 200:
+        data = response.json()
+        print(data)
+        all_data.extend(data)
 
-    # Verificando se há dados para armazenar
-    if data:
-        
-        # Iterando sobre os objetos da resposta JSON
-        if current_date == start_date:  # Escreve os cabeçalhos apenas na primeira iteração
-            csv_writer.writerow(data[0].keys())
-        for item in data:
-            csv_writer.writerow(item.values())
+# Substituir a coluna 'data'
+all_data_df = pd.DataFrame(all_data)
 
-    current_date += delta
-
-csv_file.close()
-
-print("Dados foram armazenados no arquivo", filename)
+# Salvar os dados em um arquivo CSV
+all_data_df.to_csv('data/{0}.csv'.format(sys.argv[1]), index=False)

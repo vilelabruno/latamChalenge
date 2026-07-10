@@ -1,11 +1,12 @@
 import requests
 import csv
 import datetime
+import sys
 endarr = ["cat-62","esperas","metaf","metar","satelite","tc-prev","tc-real"]
-endpoint = endarr[0]
+endpoint = sys.argv[1]#"bimtra"#endarr[0]
 base_url = "http://montreal.icea.decea.mil.br:5002/api/v1/"+endpoint
 token = "a779d04f85c4bf6cfa586d30aaec57c44e9b7173"
-REMOVER
+
 # Definindo as datas inicial e final
 start_date = datetime.date(2020, 1, 1)
 start_date2 = datetime.date(2023, 1, 1)
@@ -39,7 +40,7 @@ while current_date <= end_date:
     print(params)
     response = requests.get(base_url, params=params, headers={"accept": "application/json"})
     data = response.json()
-
+    print(data)
     # Verificando se há dados para armazenar
     if data:
         

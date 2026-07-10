@@ -5,6 +5,7 @@ __pycache__/
 data/
 *.zip
 *.csv
+bkpdata/
 # C extensions
 *.so
 temp/
